@@ -1,0 +1,40 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import sounddevice as sd
+from scipy.io.wavfile import write
+
+# ===========================
+# PARAMETER
+# ===========================
+fs = 44100    # Sampling rate (Hz)
+fc = 2000     # Frekuensi carrier (Hz)
+fm = 100      # Frekuensi sinyal pesan (Hz)
+Ac = 1        # Amplitudo carrier
+beta = 2.0    # Indeks modulasi fase
+durasi = 2    # Detik
+
+# ===========================
+# SINYAL
+# ===========================
+t = np.arange(0, durasi, 1/fs)
+m_t = np.sin(2 * np.pi * fm * t)  # sinyal pesan
+s_t = Ac * np.cos(2 * np.pi * fc * t + beta * m_t)  # Phase Modulation
+
+# ===========================
+# TAMPILKAN GRAFIK
+# ===========================
+plt.figure(figsize=(10,4))
+plt.plot(t[0:1000], s_t[0:1000])  # plot 1000 sample pertama biar jelas
+plt.title("Phase Modulation (PM) - Time Domain")
+plt.xlabel("Time (s)")
+plt.ylabel("Amplitude")
+plt.grid(True)
+
+# ▶ Mainkan suara langsung saat grafik ditampilkan
+sd.play(s_t, fs)
+plt.show()
+sd.wait()
+
+# Simpan file audio
+write("phase_modulation.wav", fs, (s_t * 32767).astype(np.int16))
+print("Suara diputar & file disimpan sebagai 'phase_modulation.wav'")
